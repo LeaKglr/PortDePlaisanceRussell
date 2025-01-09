@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord</title>
+</head>
+<body>
+  <h1>Tableau de Bord</h1>
+    <p id="welcomeMessage">Bienvenue !</p>
+
+    <h2>Gestion des utilisateurs de la capitainerie :</h2>
+
+      <!-- Formulaire pour ajouter une nouvel utilisateur -->
+      <h3>Ajouter un nouvel utilisateur</h3>
+        <form id="addUserForm">
+          <label for="name">Nom :</label>
+          <input type="text" id="name" name="name" placeholder="Nom" required><br><br>
+
+          <label for="email">Email :</label>
+          <input type="email" id="email" name="email" placeholder="Email" required><br><br>
+
+          <label for="password">Mot de passe :</label>
+          <input type="password" id="password" name="password" placeholder="Mot de passe" required><br><br>
+
+          <button type="submit">Ajouter</button>
+        </form>
+
+        <p id="addUserMessage" style="color: green;"></p>
+
+      <!-- Formulaire pour modifier les informations d'un utilisateur -->
+      <h3>Modifier un utilisateur :</h3>
+        <form id="updateUserForm">
+          <label for="updateUserId">ID de l'utilisateur :</label>
+          <input type="text" id="updateUserId" name="updateUserId" placeholder="ID de l'utilisateur" required><br><br>
+
+          <label for="updateName">Nouveau nom :</label>
+          <input type="text" id="updateName" name="updateName" placeholder="Nouveau nom"><br><br>
+
+          <label for="updateEmail">Nouvel email :</label>
+          <input type="email" id="updateEmail" name="updateEmail" placeholder="Nouvel email"><br><br>
+
+          <button type="submit">Modifier l'utilisateur</button>
+        </form>
+        <p id="updateMessage" style="color: red;"></p>
+
+        <!-- Formulaire pour supprimer un utilisateur -->
+      <h3>Supprimer un utilisateur :</h3>
+        <form id="deleteUserForm">
+            <label for="userId">ID de l'utilisateur :</label>
+            <input type="text" id="userId" name="userId" placeholder="Entrez l'ID de l'utilisateur" required>
+            <button type="submit">Supprimer l'utilisateur</button>
+        </form>
+        <p id="deleteMessage" style="color: red;"></p>
+    
+    <h2>Gestion des catways :</h2>
+      
+      <!-- Formulaire pour ajouter un catway -->
+      <h3>Ajouter un catway :</h3>
+        <form id="addCatwayForm">
+          <label for="catwayNumber">Numéro du catway :</label>
+          <input type="number" id="catwayNumber" name="catwayNumber" placeholder="catwayNumber" required><br>
+           
+          <label for="Type">Type (short ou long) :</label>
+          <input type="text", id="Type" name="Type", placeholder="Type" required><br>
+
+          <label for="catwayState">Description du catway :</label>
+          <input type="text" id="catwayState" name="catwayState" placeholder="Description" required><br>
+        
+          <button type="submit">Ajouter</button>
+        </form>
+        <p id="addCatwayMessage" style="color: green;"></p>
+
+      <!-- Formulaire pour modifier la description de l'état d'un catway -->
+      <h3>Modifier la description de l'état d'un catway :</h3>
+        <form id="updateCatwayForm">
+          <label for="catwayId">ID :</label>
+          <input type="text" id="catwayId" name="catwayId" placeholder="ID du Catway" required><br>
+          
+          <label for="newCatwayState">Nouvelle Description :</label>
+          <input type="text" id="newCatwayState" name="newCatwayState" placeholder="Nouvelle Description" required><br>
+        
+          <button type="submit">Modifier</button>
+        </form>
+        <p id="updateCatwayMessage" style="color: green;"></p>     
+
+      <!-- Formulaire pour supprimer un catway -->
+      <h3>Supprimer un catway :</h3>
+        <form id="deleteCatwayForm">
+          <label for="deleteCatwayId">ID :</label>
+          <input type="text" id="deleteCatwayId" name="deleteCatwayId" placeholder="ID du Catway" required><br>
+        
+          <button type="submit">Supprimer</button>
+        </form>
+        <p id="deleteCatwayMessage" style="color: red;"></p>
+
+      <!-- Formulaire pour afficher les détails d'un catway -->
+      <h3>Afficher les détails d'un catway :</h3>
+      <form id="detailsCatway">
+        <label for="catwayDetailsId">ID du Catway:</label>
+        <input type="text" id="catwayDetailsId" name="catwayDetailsId" required><br>
+      
+        <button type="submit" id="showDetailsButton">Afficher les détails</button>
+      </form>
+      <div id="catwayDetails"></div>
+
+  <h2>Gestion des réservations :</h2>
+      <h3>Enregistrer une réservation :</h3>
+      <p>D'abord aller voir dans les détails d'un catway avec son ID, puis faire une réservation pour qu'elle soit associé au catway directement.</p>
+      
+      <!-- Formulaire pour supprimer une réservation -->
+      <h3>Supprimer une réservation :</h3>
+      <form id="deleteReservationForm">
+        <label for="catwayIdSupprimer">ID du catway :</label>
+        <input type="text" id="catwayIdSupprimer" name="catwayIdSupprimer" required><br>
+        <label for="deleteReservationId">ID de la réservation :</label>
+        <input type="text" id="deleteReservationId" name="deleteReservationId" required><br>
+        <button type="submit">Supprimer la réservation</button>
+      </form>
+      <div id="deleteReservationMessage"></div>
+      
+      
+      <!-- Formulaire pour afficher les détails d'une réservation -->
+      <h3>Afficher les détails d'une réservation :</h3>
+        <form id="reservationIdForm">
+          <label for="catwayIdReservation">ID du Catway :</label>
+          <input type="text" id="catwayIdReservation" name="catwayIdReservation" required><br>
+        
+          <label for="reservationId">ID de la Réservation :</label>
+          <input type="text" id="reservationId" name="reservationId" required><br>
+        
+          <button type="submit">Voir les détails de la réservation</button>
+        </form>
+
+  <h2>Liste des catways :</h2>
+        <a href="catwaysList.html">Voir la liste des Catways</a>
+
+  <h2>Liste des réservations :</h2>
+        <a href="reservationsList.html">Voir la liste des réservations</a><br>
+
+  <button id="logoutBtn">Se déconnecter</button>
+
+  <script src="./javascripts/app.js"></script>
+</body>
+</html>
