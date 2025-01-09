@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: catwayservice.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: catwayservice.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Catway = require('../models/catway');
+
+/**
+ * # Recherche un catway par son ID.
+ * 
+ * @description
+ * ### Vue d'ensemble
+ * Cette fonction récupère un catway dans la base de données MongoDB en utilisant son ID.
+ * - Si le catway est trouvé, retourne un statut `200` avec les détails du catway.
+ * - Si aucun catway n'est trouvé, retourne un statut `404` avec un message d'erreur.
+ * - En cas d'erreur interne, retourne un statut `500` avec des informations sur l'erreur.
+ * 
+ * 
+ * @function findCatwayById
+ * @async
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} req.params - Paramètres de la requête.
+ * @param {string} req.params.id - Identifiant unique du catway.
+ * @param {Object} res - Objet de réponse Express.
+ * @returns {Promise&lt;void>} - Retourne une réponse HTTP.
+ * 
+ * 
+ * ### Tutoriel
+ * 1. Faire une requête GET `/api/catways/:id`.
+ * 2. Remplacer `:id` par l'ID du catway que vous souhaitez récupérer.
+ * 3. Ajouter un token JWT valide dans l'en-tête HTTP `Authorization`.
+ * 
+ * @example
+ * **Requête :**
+ * ```http
+ * GET /api/catways/1234567890abcdef
+ * Authorization: Bearer &lt;votre-token-jwt>
+ * ```
+ * **Réponse (succès) :**
+ * ```json
+ * {
+ *   "_id": "1234567890abcdef",
+ *   "catwayNumber": "42",
+ *   "type": "long",
+ *   "catwayState": "bon état"
+ * }
+ * ```
+ * 
+ * **Réponse (non trouvé) :**
+ * ```json
+ * {
+ *   "message": "Catway non trouvé."
+ * }
+ * ```
+ * 
+ * **Réponse (erreur interne) :**
+ * ```json
+ * {
+ *   "message": "Erreur lors de la récupération du catway.",
+ *   "error": "Cast to ObjectId failed"
+ * }
+ * ```
+ * 
+ * ### Glossaire
+ * - Catway : petit appontement pour amarrer un bateau.
+ * - JWT : jeton d'authentification utilisé pour sécuriser les API.
+ * - ID : Identifiant unique utilisé pour rechercher un catway dans la base de données.
+ */
+const findCatwayById = async (req, res) => {
+  try {
+    const { id } = req.params; // Récupère l'ID du catway depuis les paramètres de l'URL
+
+    const catway = await Catway.findById(id); // Utilise `findById` pour chercher l'ID
+
+    // Si aucun catway n'est trouvé, un message d'erreur est affiché.
+    if (!catway) {
+      return res.status(404).json({ message: "Catway non trouvé." });
+    }
+
+    res.status(200).json(catway); // Retourne le catway trouvé
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération du catway.", error: error.message });
+  }
+}
+
+/**
+ * # Récupère la liste de tous les catways depuis la base de données.
+ * 
+ * @description
+ * ## Vue d'ensemble
+ * Cette fonction va permettre de récupérer tous les catways existant dans la base de données MongoDB.
+ * - Si un ou plusieurs catways sont trouvé, retourne la liste des catways.
+ * - En cas d'erreur durant la requête, un message est affiché.
+ * 
+ * 
+ * @async
+ * @function findAll
+ * @returns {Promise&lt;Catway[]>} Une promesse contenant une liste des catways récupérés.
+ * @throws {Error} Lance une erreur si une exception survient lors de la récupération.
+ * 
+ * 
+ * ## Tutoriel 
+ * 1. Envoyer une requête GET à l'API sans paramètres. 
+ * 
+ * @example
+ * Exemple de requête avec cURL :
+ * ```bash
+ * curl -X GET http://localhost:3001/api/catways
+ * ```
+ * 
+ * Exemple de réponse réussie :
+ * ```json
+ * [
+ *   {
+ *     "_id": '67797be13ff4c780b4b4b3fd', 
+ *     "catwayNumber": 35,
+ *     "type" : "short",
+ *     "catwayState" : "bon état"
+ *   },
+ *   {
+ *     "_id": '67797b9b3ff4c780b4b4b3f8', 
+ *     "catwayNumber": 36,
+ *     "type" : "long",
+ *     "catwayState" : "excellent état"
+ *   }
+ * ]
+ * ```
+ * 
+ * ## Glossaire
+ * - Catway : petit appontement pour amarrer un bateau. 
+ */
+async function findAll() {
+  try {
+      // Récupération de tous les catways présents dans la base de données MongoDB.
+      const catways = await Catway.find();
+      console.log('Catways trouvés :', catways);
+      // Retourne une liste de catways.
+      return catways;
+  } catch (error) {
+      console.error('Erreur dans findAll :', error);
+      throw new Error('Erreur lors de la récupération des catways');
+  }
+};
+
+/**
+ * # Met à jour la description de l'état d'un catway.
+ * 
+ * @description
+ * ## Vue d'ensemble 
+ * Cette fonction permet de modifier l'état d'un catway spécifique en utilisant son ID dans les paramètres de l'URL.
+ * Elle utilise `findByIdAndUpdate` de Mongoose pour mettre à jour l'état du catway.
+ * Si le catway est trouvé et mis à jour, un message de succès est retourné.
+ * Sinon, une erreur est renvoyée.
+ * 
+ * 
+ * @async
+ * @function updateCatwayState
+ * @param {Object} req - La requête HTTP.
+ * @param {Object} req.params - Les paramètres de la requête.
+ * @param {string} req.params.id - L'ID du catway à mettre à jour.
+ * @param {Object} req.body - Le corps de la requête.
+ * @param {string} req.body.catwayState - Le nouvel état du catway.
+ * @param {Object} res - La réponse HTTP.
+ * @returns {Object} - Retourne un objet JSON avec un message et le catway mis à jour.
+ * @throws {Error} - En cas d'erreur dans la mise à jour du catway.
+ * 
+ * 
+ * ## Tutoriel 
+ * 1. S'assurer que vous avez déjà un catway existant dans la base de données.
+ * 2. Appeler cette fonction pour mettre à jour l'état du catway en utilisant son ID.
+ * 3. On peut tester la mise à jour avec un outil comme Postman en envoyant une requête PUT avec l'ID du catway et l'état à modifier.
+ * 
+ * @example
+ * ```bash
+ * PUT http://localhost:3001/api/catways/{id}
+ * Content-Type: application/json
+ * Body: 
+ * {
+ *   "catwayState": "nouvel état"
+ * }
+ * ```
+ *
+ * ## Glossaire
+ * - Catway : petit appontement pour amarrer un bateau. 
+ * - CatwayState : description de l'état du catway.
+ */
+const updateCatwayState = async (req, res) => {
+  const { id } = req.params;  
+  const { catwayState } = req.body; 
+
+  try {
+    const updatedCatway = await Catway.findByIdAndUpdate(
+      id,  // Utilise ici l'ObjectId pour la recherche
+      { catwayState },  // Le champ à mettre à jour
+      { new: true }  // Retourne le catway mis à jour
+    );
+
+    if (!updatedCatway) {
+      return res.status(404).json({ message: "Catway non trouvé." });
+    }
+
+    // Affiche un message de succès et le catway mis à jour
+    res.status(200).json({
+      message: "Catway mis à jour avec succès.",
+      catway: updatedCatway,
+    });
+  } catch (error) {
+    // Affiche l'erreur si elle survient
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour.",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * # Ajoute un nouveau catway dans la base de données.
+ * 
+ * @description
+ * ## Vue d'ensemble
+ * Cette fonction permet de créer un nouveau catway en utilisant les informations envoyées dans la requête HTTP.
+ * Elle vérifie d'abord si tous les champs nécessaires (numéro de catway, état et type) sont fournis.
+ * Ensuite, elle crée un nouveau catway et le sauvegarde dans la base de données.
+ * Si l'ajout est réussi, un message de succès est retourné avec les détails du catway ajouté.
+ * Sinon, une erreur est retournée.
+ * 
+ * 
+ * @async
+ * @function addCatway
+ * @param {Object} req - La requête HTTP.
+ * @param {Object} req.body - Le corps de la requête.
+ * @param {number} req.body.catwayNumber - Le numéro du catway.
+ * @param {string} req.body.catwayState - L'état actuel du catway.
+ * @param {string} req.body.type - Le type de catway ("long" ou "short").
+ * @param {Object} res - La réponse HTTP.
+ * @returns {Object} - Retourne un objet JSON avec un message et le catway ajouté.
+ * @throws {Error} - Si une erreur se produit lors de l'ajout du catway.
+ * 
+ * 
+ * ## Tutoriel 
+ * 1. Pour ajouter un catway, envoyer une requête POST à l'API avec les informations suivantes : 
+ *    - `catwayNumber` : Le numéro de pont (doit être unique).
+ *    - `catwayState` : L'état actuel du catway (ex. "bon état", "en réparation").
+ *    - `type` : Le type de catway (soit "long" soit "short").
+ *   
+ * @example
+ * Exemple de requête avec cURL :
+ * 
+ * ```bash
+ * POST http://localhost:3001/api/catways
+ * Content-Type: application/json
+ * Body:
+ * {
+ *   "catwayNumber": 12,
+ *   "catwayState": "bon état",
+ *   "type": "long"
+ * }
+ * ```
+ * 
+ * Si la requête réussit, un message de succès est renvoyé, contenant les informations du catway ajouté.
+ * 
+ * Exemple de réponse :
+ * 
+ * ```json
+ * {
+ *   "message": "Catway ajouté avec succès.",
+ *   "catway": {
+ *     "_id": "60b8c89b5414c5195ca65d99",
+ *     "catwayNumber": 12345,
+ *     "catwayState": "bon état",
+ *     "type": "long",
+ *     "__v": 0
+ *   }
+ * }
+ * ```
+ * 
+ * ## Glossaire :
+ * - Catway : petit appontement pour amarrer un bateau. 
+ * - CatwayState : description de l'état du catway.
+ * - Type : le type peut prendre deux valeurs "long" ou "short".
+ */
+const addCatway = async (req, res) => {
+  try {
+    const { catwayNumber, catwayState, type } = req.body;
+
+    if (!catwayNumber || !catwayState || !type) {
+      return res.status(400).json({ message: 'Tous les champs sont nécessaires.' });
+    }
+
+    const newCatway = new Catway({ catwayNumber, catwayState, type });
+    await newCatway.save();
+
+    res.status(201).json({ message: 'Catway ajouté avec succès.', catway: newCatway });
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du catway:', error);
+    res.status(500).json({ message: 'Erreur serveur.', error: error.message });
+  }
+};
+
+/**
+ * # Supprime un catway de la base de données en fonction de son ID.
+ *
+ * @description
+ * ## Vue d'ensemble 
+ * Cette fonction permet de supprimer un catway spécifique de la base de données en utilisant son ID,
+ * qui est extrait des paramètres de la requête. Si le catway existe, il est supprimé et un message
+ * de succès est renvoyé. Si le catway n'est pas trouvé, une erreur 404 est retournée.
+ *
+ * 
+ * @async
+ * @function deleteCatwayById
+ * @param {Object} req - La requête HTTP.
+ * @param {Object} req.params - Les paramètres de la requête.
+ * @param {string} req.params.id - L'ID du catway à supprimer.
+ * @param {Object} res - La réponse HTTP.
+ * @returns {Object} - Retourne un objet JSON avec un message indiquant que le catway a été supprimé avec succès.
+ * @throws {Error} - Si une erreur se produit lors de la suppression du catway.
+ * 
+ * 
+ * ## Tutoriel
+ * 1. Pour supprimer un catway, envoyer une requête DELETE à l'API avec l'ID du catway dans les paramètres de l'URL.
+ *    Par exemple, pour supprimer le catway ayant l'ID `60b8c89b5414c5195ca65d99`, il faut envoyer la requête suivante :
+ * 
+ * @example
+ * Exemple de requête avec cURL :
+ * 
+ * ```bash
+ * DELETE http://localhost:3001/api/catways/60b8c89b5414c5195ca65d99
+ * ```
+ * 
+ * Si la requête réussit, un message de succès est renvoyé.
+ * 
+ * Exemple de réponse :
+ * 
+ * ```json
+ * {
+ *   "message": "Catway supprimé avec succès."
+ * }
+ * ```
+ *
+ * Si l'ID du catway n'est pas trouvé, une erreur 404 sera retournée :
+ * 
+ * Exemple de réponse d'erreur :
+ * 
+ * ```json
+ * {
+ *   "message": "Catway non trouvé."
+ * }
+ * ```
+ *
+ * ## Glossaire 
+ * - Catway : petit appontement pour amarrer un bateau. 
+ */
+const deleteCatwayById = async (req, res) => {
+  try {
+    const catwayId = req.params.id;
+    const catwayToDelete = await Catway.findById(catwayId);
+
+    if (!catwayToDelete) {
+      return res.status(404).json({ message: "Catway non trouvé." });
+    }
+
+    const deletedCatway = await Catway.findOneAndDelete({ _id: catwayId });
+    
+    res.status(200).json({ message: "Catway supprimé avec succès." });
+
+
+    return deletedCatway;  // Retourne le catway supprimé
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la suppression du catway.", error: err.message });
+
+  }
+};
+
+/**
+ * # Met à jour partiellement un catway dans la base de données.
+ *
+ * @description
+ * ## Vue d'ensemble
+ * Cette fonction permet de mettre à jour certains champs d'un catway spécifique, identifié par son ID.
+ * Les données à mettre à jour sont fournies dans le corps de la requête. Si le catway existe, les
+ * modifications sont appliquées et le catway mis à jour est renvoyé.
+ *
+ * 
+ * @async
+ * @function partialUpdate
+ * @param {Object} req - La requête HTTP.
+ * @param {Object} req.params - Les paramètres de la requête.
+ * @param {string} req.params.id - L'ID du catway à mettre à jour.
+ * @param {Object} req.body - Les données à mettre à jour.
+ * @param {Object} res - La réponse HTTP.
+ * @returns {Object} - Retourne l'objet du catway mis à jour.
+ * @throws {Error} - Si une erreur se produit lors de la mise à jour.
+ * 
+ * 
+ * ## Tutoriel
+ * 1. Pour effectuer une mise à jour partielle, il faut envoyer une requête PATCH à l'API avec l'ID du catway
+ *    dans les paramètres de l'URL et les champs à mettre à jour dans le corps de la requête.
+ *
+ * @example
+ * Exemple de requête avec cURL :
+ * 
+ * ```bash
+ * PATCH http://localhost:3001/api/catways/60b8c89b5414c5195ca65d99
+ * Content-Type: application/json
+ *
+ * {
+ *   "catwayState": "Nouveau État",
+ *   "type": "long"
+ * }
+ * ```
+ *
+ * Si la requête réussit, le catway mis à jour sera renvoyé dans la réponse :
+ * 
+ * Exemple de réponse :
+ * 
+ * ```json
+ * {
+ *   "_id": "60b8c89b5414c5195ca65d99",
+ *   "catwayNumber": 123,
+ *   "catwayState": "Nouveau État",
+ *   "type": "long"
+ * }
+ * ```
+ *
+ * Si le catway n'est pas trouvé, une erreur 404 est renvoyée :
+ * 
+ * Exemple de réponse d'erreur :
+ * 
+ * ```json
+ * {
+ *   "message": "Catway non trouvé."
+ * }
+ * ```
+ *
+ * ## Glossaire
+ * - Catway : petit appontement pour amarrer un bateau.
+ * - CatwayNumber : numéro de pont.
+ * - CatwayState : description de l'état du catway.
+ * - Type : le type peut prendre deux valeurs "long" ou "short".
+ */
+const partialUpdate = async (req, res) => {
+  try {
+    const catwayId = req.params.id; // Récupère l'ID du catway depuis l'URL
+    const updates = req.body; // Récupère les données à mettre à jour depuis le body
+
+    console.log('Catway ID reçu pour mise à jour partielle :', catwayId);
+    console.log('Champs à mettre à jour :', updates);
+
+    const updatedCatway = await Catway.findByIdAndUpdate(catwayId, updates, {
+      new: true, // Renvoie le catway mis à jour
+      runValidators: true, // Applique les validateurs définis dans le schéma
+    });
+
+    if (!updatedCatway) {
+      return res.status(404).json({ message: 'Catway non trouvé.' });
+    }
+
+    res.status(200).json(updatedCatway);
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour partielle du catway :', error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour partielle du catway.' });
+  }
+};
+
+
+module.exports = {
+  findCatwayById,
+  findAll,
+  deleteCatwayById,
+  addCatway,
+  updateCatwayState,
+  partialUpdate
+};
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCatway">addCatway</a></li><li><a href="global.html#deleteCatwayById">deleteCatwayById</a></li><li><a href="global.html#findAll">findAll</a></li><li><a href="global.html#findCatwayById">findCatwayById</a></li><li><a href="global.html#partialUpdate">partialUpdate</a></li><li><a href="global.html#updateCatwayState">updateCatwayState</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jan 09 2025 19:02:40 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

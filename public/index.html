@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <h1>Bienvenue sur la page d'accueil</h1>
+  <h2>Présentation de l'application :</h2>
+  
+  <h3>Contexte :</h3>
+  <p>Le port de plaisance Russell est un lieu dynamique accueillant une grande variété de bateaux. Afin de simplifier et d'optimiser la gestion des réservations des catways (petits appontements utilisés pour amarrer les bateaux), une application web a été développée pour faciliter le processus de réservation, d'administration et de suivi des amarrages.<br>
+    Cette application est accessible via une interface web sécurisée, utilisant une API privée pour assurer la confidentialité et la sécurité des données des utilisateurs et des réservations.</p>
+  
+  <h3>Fonctionnalités prinpales de l'API nécessaires à la capitainerie :</h3>
+    <h4>Pour la gestion des catways :</h4>
+  <ul>
+    <li>Créer un catway,</li>
+    <li>Lister l'ensemble des catways,</li>
+    <li>Récupérer les détails d'un catway en particulier,</li>
+    <li>Modifier la description de l'état d'un catway en particulier,</li>
+    <li>Supprimer un catway,</li>
+  </ul>
+
+    <h4>Pour la gestion des réservations :</h4>
+  <ul>
+    <li>Prendre la réservation d'un catway,</li>
+    <li>Supprimer une réservation,</li>
+    <li>Lister l'ensemble des réservations,</li>
+    <li>Afficher les détails d'une réservation en particulier.</li>
+  </ul>
+
+    <h4>API sécurisée et Authentification :</h4>
+    <ul>
+      <li>L'application repose sur une API privée permettant de communiquer en toute sécurité avec la base de données.</li>
+      <li>Authentification JWT (JSON Web Token) : Les utilisateurs et les administrateurs doivent se connecter via un système d'authentification sécurisé pour accéder à certaines fonctionnalités. Un token JWT est généré et utilisé pour valider les actions des utilisateurs.</li>
+    </ul>
+
+  
+  <h3>Technologies utilisées :</h3>
+  <ul>
+    <li><strong>Frontend :</strong> l'application web utilise des langages HTML, CSS et JavaScript pour offrir une interface utilisateur fluide et interactive.</li>
+    <li><strong>Backend :</strong> l'API est construite en Node.js avec le framework Express.js, offrant une gestion efficace des routes et des requêtes.</li>
+    <li><strong>Base de Données :</strong> La base de données est gérée avec MongoDB, offrant une solution flexible et scalable pour stocker les informations des catways et des réservations.</li>
+    <li><strong>Sécurité :</strong> l'application utilise des mécanismes de sécurité robustes pour protéger les données des utilisateurs, notamment des tokens JWT pour l'authentification et la gestion des sessions.</li>
+  </ul>
+
+  <h3>Accessibilité et Utilisation :</h3>
+  <ul>
+    <li>L'interface est accessible depuis n'importe quel appareil connecté à Internet (ordinateur, tablette, smartphone).</li>
+    <li>Le tableau de bord de l'application permet aux utilisateurs d'effectuer toutes les actions nécessaires à la gestion des réservations, avec une interface simple et intuitive.</li>
+  </ul>
+  
+  <h2>Se connecter :</h2>
+
+  <!-- Formulaire pour se connecter à l'application -->
+  <form id="loginForm">
+    <label for="email">Email :</label>
+    <input type="email" id="email" name="email" placeholder="Email" required><br><br>
+
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" name="password" placeholder="Mot de passe" required><br><br>
+
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <p id="errorMessage" style="color: red;"></p>
+
+  <h2>Documentation de l'API :</h2>
+  
+  <script src="./javascripts/app.js"></script>
+</body>
+
+</html>

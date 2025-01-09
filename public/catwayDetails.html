@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catway Details</title>
+</head>
+<body>
+  <h1>Détails du Catway</h1>
+  <div id="catwayDetails">
+    <!-- Les détails du catway seront affichés ici -->
+  </div>
+
+  <!-- Formulaire pour enregistrer une réservation pour un catway -->
+  <h3>Enregistrer une réservation :</h3>
+        <form id="reservationForm">
+          <label for="catwayNumberReservation">Numéro du Catway :</label>
+          <input type="number" id="catwayNumberReservation" name="catwayNumberReservation" required>
+          
+          <label for="clientName">Nom du client :</label>
+          <input type="text" id="clientName" name="clientName" required>
+        
+          <label for="boatName">Nom du bateau :</label>
+          <input type="text" id="boatName" name="boatName" required>
+        
+          <label for="checkIn">Date de début :</label>
+          <input type="date" id="checkIn" name="checkIn" required>
+        
+          <label for="checkOut">Date de fin :</label>
+          <input type="date" id="checkOut" name="checkOut" required>
+        
+          <button type="submit">Réserver</button>
+        </form>
+        
+        <div id="reservationMessage">
+          <!-- Le message d'erreur s'affichera ici -->
+        </div>
+
+  <button id="backButton">Retour au Dashboard</button>
+  <script src="javascripts/catwayDetails.js"></script>
+</body>
+</html>
